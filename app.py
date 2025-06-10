@@ -6,91 +6,129 @@ import os
 app = Flask(__name__)
 
 # --- Połączenie z MongoDB ---
-# Używamy nazwy serwisu z docker-compose.yml jako hosta
-client = MongoClient(os.environ.get("MONGO_URI")) 
-db = client.gamesDB # Nazwa bazy danych
+client = MongoClient("mongodb://mongodb:27017/") 
+db = client.gamesdb
+
+# === ENDPOINTY PUBLICZNE ===
 
 @app.route('/')
 def index():
-    """
-    Serwuje główną stronę aplikacji.
-    """
+    """Serwuje główną stronę aplikacji."""
     return render_template('index.html')
 
-# --- ZMODYFIKOWANY ENDPOINT - ZADANIE 2.3 ---
 @app.route('/api/games', methods=['GET'])
 def get_games():
-    """
-    Zwraca listę wszystkich gier z bazy danych.
-    Obsługuje filtrowanie po gatunku (np. ?genre=RPG)
-    oraz sortowanie (np. ?sort=title lub ?sort=-release_date).
-    """
+    """Zwraca listę wszystkich gier z opcją filtrowania i sortowania."""
     games_collection = db.games
     query_filter = {}
     sort_criteria = []
 
-    # Krok 1: Implementacja filtrowania po gatunku
     genre_param = request.args.get('genre')
     if genre_param:
-        # Dodajemy warunek do słownika z filtrami.
-        # Znajdzie gry, które w tablicy 'genres' mają podaną wartość.
         query_filter['genres'] = genre_param
 
-    # Krok 2: Implementacja sortowania
     sort_param = request.args.get('sort')
     if sort_param:
-        sort_field = sort_param
-        # Domyślnie sortujemy rosnąco (wartość 1 w MongoDB)
+        sort_field = sort_param.strip()
         sort_order = 1
-        
-        # Jeśli parametr zaczyna się od '-', sortujemy malejąco
-        if sort_param.startswith('-'):
-            # Wartość -1 w MongoDB oznacza sortowanie malejące
+        if sort_field.startswith('-'):
             sort_order = -1
-            # Usuwamy '-' z nazwy pola do sortowania
-            sort_field = sort_param[1:]
-        
-        # Upewniamy się, że sortowanie odbywa się po dozwolonych polach
+            sort_field = sort_field[1:]
         if sort_field in ['title', 'release_date']:
             sort_criteria.append((sort_field, sort_order))
 
-    # Budujemy zapytanie - najpierw filtrujemy...
     cursor = games_collection.find(query_filter)
-
-    # ...a następnie, jeśli zdefiniowano sortowanie, dodajemy je do zapytania
     if sort_criteria:
         cursor = cursor.sort(sort_criteria)
     
-    games_list = []
-    for game in cursor:
+    games_list = [game for game in cursor]
+    for game in games_list:
         game['_id'] = str(game['_id'])
-        games_list.append(game)
         
     return jsonify(games_list)
 
-# --- NOWY ENDPOINT - ZADANIE 2.2 ---
 @app.route('/api/games/<game_id>', methods=['GET'])
 def get_game_details(game_id):
-    """
-    Zwraca szczegółowe dane jednej gry na podstawie jej ID.
-    """
+    """Zwraca szczegółowe dane jednej gry na podstawie jej ID."""
     games_collection = db.games
     try:
-        # Konwertujemy string ID na ObjectId
         obj_id = ObjectId(game_id)
     except Exception:
-        # Jeśli podany ID ma niepoprawny format, zwracamy błąd 400 Bad Request
         abort(400, description="Invalid ID format.")
 
     game = games_collection.find_one({'_id': obj_id})
-    
     if game:
-        # Jeśli znaleziono grę, konwertujemy jej _id na string i zwracamy dane
         game['_id'] = str(game['_id'])
         return jsonify(game)
     else:
-        # Jeśli gra o danym ID nie istnieje, zwracamy błąd 404 Not Found
         abort(404, description="Game not found.")
+
+# === NOWE ENDPOINTY ADMINISTRACYJNE (CRUD) - ZADANIE 4.1 ===
+
+@app.route('/api/admin/games', methods=['POST'])
+def add_game():
+    """Dodaje nową grę do bazy danych (operacja INSERT)."""
+    if not request.json or not 'title' in request.json:
+        abort(400, description="Missing 'title' in request body.")
+    
+    new_game_data = request.get_json()
+    games_collection = db.games
+    
+    # Można tutaj dodać walidację danych przychodzących
+    # np. sprawdzić typy danych, wymagane pola etc.
+    
+    result = games_collection.insert_one(new_game_data)
+    
+    created_game = games_collection.find_one({'_id': result.inserted_id})
+    created_game['_id'] = str(created_game['_id'])
+    
+    return jsonify(created_game), 201
+
+@app.route('/api/admin/games/<game_id>', methods=['PUT'])
+def update_game(game_id):
+    """Aktualizuje istniejącą grę (operacja UPDATE)."""
+    if not request.json:
+        abort(400, description="Request body cannot be empty.")
+        
+    try:
+        obj_id = ObjectId(game_id)
+    except Exception:
+        abort(400, description="Invalid ID format.")
+        
+    update_data = request.get_json()
+    games_collection = db.games
+    
+    # Usuwamy pole _id z danych do aktualizacji, jeśli zostało przesłane
+    update_data.pop('_id', None)
+
+    result = games_collection.update_one(
+        {'_id': obj_id},
+        {'$set': update_data}
+    )
+    
+    if result.matched_count == 0:
+        abort(404, description="Game not found.")
+        
+    updated_game = games_collection.find_one({'_id': obj_id})
+    updated_game['_id'] = str(updated_game['_id'])
+    
+    return jsonify(updated_game)
+
+@app.route('/api/admin/games/<game_id>', methods=['DELETE'])
+def delete_game(game_id):
+    """Usuwa grę z bazy danych (operacja DELETE)."""
+    try:
+        obj_id = ObjectId(game_id)
+    except Exception:
+        abort(400, description="Invalid ID format.")
+        
+    games_collection = db.games
+    result = games_collection.delete_one({'_id': obj_id})
+    
+    if result.deleted_count == 0:
+        abort(404, description="Game not found.")
+        
+    return jsonify({'message': 'Game deleted successfully', 'deleted_count': result.deleted_count})
 
 if __name__ == '__main__':
     # Używamy 0.0.0.0, aby aplikacja była dostępna z zewnątrz kontenera
