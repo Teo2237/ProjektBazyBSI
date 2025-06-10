@@ -1,12 +1,147 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-B">
-    <title>Projekt Bazy Danych Gier</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baza Gier</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            color: #1c1e21;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            color: #0d6efd;
+        }
+        #games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .game-card {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        .game-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+        .game-card-content {
+            padding: 15px;
+            flex-grow: 1;
+        }
+        .game-card-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+        .game-card-content p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #606770;
+        }
+        .game-card-content .genres {
+            margin-top: 10px;
+            font-size: 0.8em;
+            color: #0d6efd;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
-    <h1>Witaj w projekcie bazy danych gier!</h1>
-    <p>Status połączenia z bazą danych: <strong>{{ db_status }}</strong></p>
-    <p>Twój frontend (HTML/CSS/JS) będzie tutaj.</p>
+
+    <header>
+        <h1>Katalog Gier</h1>
+    </header>
+
+    <main>
+        <div id="games-container">
+            <p>Ładowanie gier...</p>
+        </div>
+    </main>
+
+    <script>
+        // Uruchom kod, gdy cała struktura HTML zostanie załadowana
+        document.addEventListener('DOMContentLoaded', () => {
+            const gamesContainer = document.getElementById('games-container');
+
+            // Funkcja do pobierania i wyświetlania gier
+            const fetchAndDisplayGames = async () => {
+                try {
+                    // Krok 2: Użyj fetch do pobrania danych z naszego API
+                    const response = await fetch('/api/games');
+                    if (!response.ok) {
+                        throw new Error(`Błąd HTTP! Status: ${response.status}`);
+                    }
+                    const games = await response.json();
+
+                    // Wyczyść kontener przed dodaniem nowych elementów
+                    gamesContainer.innerHTML = '';
+
+                    // Krok 3: Wygeneruj dynamicznie listę gier
+                    games.forEach(game => {
+                        // Stwórz główny element karty
+                        const card = document.createElement('div');
+                        card.className = 'game-card';
+
+                        // Stwórz i dodaj obrazek okładki
+                        const image = document.createElement('img');
+                        image.src = game.cover_image;
+                        image.alt = `Okładka gry ${game.title}`;
+
+                        // Stwórz kontener na treść (tytuł, data, gatunki)
+                        const content = document.createElement('div');
+                        content.className = 'game-card-content';
+
+                        const title = document.createElement('h3');
+                        title.textContent = game.title;
+
+                        const releaseDate = document.createElement('p');
+                        releaseDate.textContent = `Data wydania: ${game.release_date}`;
+                        
+                        const genres = document.createElement('p');
+                        genres.className = 'genres';
+                        genres.textContent = game.genres.join(', ');
+
+                        // Złóż elementy w całość
+                        content.appendChild(title);
+                        content.appendChild(releaseDate);
+                        content.appendChild(genres);
+                        card.appendChild(image);
+                        card.appendChild(content);
+
+                        // Dodaj gotową kartę do głównego kontenera na stronie
+                        gamesContainer.appendChild(card);
+                    });
+
+                } catch (error) {
+                    gamesContainer.innerHTML = '<p style="color: red;">Wystąpił błąd podczas ładowania gier. Sprawdź konsolę, aby uzyskać więcej informacji.</p>';
+                    console.error('Nie udało się pobrać danych gier:', error);
+                }
+            };
+
+            // Wywołaj funkcję
+            fetchAndDisplayGames();
+        });
+    </script>
+
 </body>
 </html>
