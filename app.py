@@ -16,6 +16,12 @@ def index():
     """Serwuje główną stronę aplikacji."""
     return render_template('index.html')
 
+# NOWA TRASA DO PANELU ADMINA
+@app.route('/admin')
+def admin_panel():
+    """Serwuje stronę panelu administracyjnego."""
+    return render_template('admin.html')
+
 @app.route('/api/games', methods=['GET'])
 def get_games():
     """Zwraca listę wszystkich gier z opcją filtrowania i sortowania."""
@@ -63,7 +69,7 @@ def get_game_details(game_id):
     else:
         abort(404, description="Game not found.")
 
-# === NOWE ENDPOINTY ADMINISTRACYJNE (CRUD) - ZADANIE 4.1 ===
+# === ENDPOINTY ADMINISTRACYJNE (CRUD) ===
 
 @app.route('/api/admin/games', methods=['POST'])
 def add_game():
@@ -73,15 +79,9 @@ def add_game():
     
     new_game_data = request.get_json()
     games_collection = db.games
-    
-    # Można tutaj dodać walidację danych przychodzących
-    # np. sprawdzić typy danych, wymagane pola etc.
-    
     result = games_collection.insert_one(new_game_data)
-    
     created_game = games_collection.find_one({'_id': result.inserted_id})
     created_game['_id'] = str(created_game['_id'])
-    
     return jsonify(created_game), 201
 
 @app.route('/api/admin/games/<game_id>', methods=['PUT'])
@@ -89,29 +89,17 @@ def update_game(game_id):
     """Aktualizuje istniejącą grę (operacja UPDATE)."""
     if not request.json:
         abort(400, description="Request body cannot be empty.")
-        
     try:
         obj_id = ObjectId(game_id)
     except Exception:
         abort(400, description="Invalid ID format.")
-        
     update_data = request.get_json()
-    games_collection = db.games
-    
-    # Usuwamy pole _id z danych do aktualizacji, jeśli zostało przesłane
     update_data.pop('_id', None)
-
-    result = games_collection.update_one(
-        {'_id': obj_id},
-        {'$set': update_data}
-    )
-    
+    result = db.games.update_one({'_id': obj_id}, {'$set': update_data})
     if result.matched_count == 0:
         abort(404, description="Game not found.")
-        
-    updated_game = games_collection.find_one({'_id': obj_id})
+    updated_game = db.games.find_one({'_id': obj_id})
     updated_game['_id'] = str(updated_game['_id'])
-    
     return jsonify(updated_game)
 
 @app.route('/api/admin/games/<game_id>', methods=['DELETE'])
@@ -121,15 +109,10 @@ def delete_game(game_id):
         obj_id = ObjectId(game_id)
     except Exception:
         abort(400, description="Invalid ID format.")
-        
-    games_collection = db.games
-    result = games_collection.delete_one({'_id': obj_id})
-    
+    result = db.games.delete_one({'_id': obj_id})
     if result.deleted_count == 0:
         abort(404, description="Game not found.")
-        
-    return jsonify({'message': 'Game deleted successfully', 'deleted_count': result.deleted_count})
+    return jsonify({'message': 'Game deleted successfully'})
 
 if __name__ == '__main__':
-    # Używamy 0.0.0.0, aby aplikacja była dostępna z zewnątrz kontenera
     app.run(host='0.0.0.0', port=5000, debug=True)
