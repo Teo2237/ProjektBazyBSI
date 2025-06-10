@@ -4,20 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baza Gier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        /* Zastosowanie nowej czcionki i ogólne style */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 20px;
-            color: #1c1e21;
+            color: #212529;
         }
         header {
             text-align: center;
             margin-bottom: 20px;
         }
         h1 {
-            color: #0d6efd;
+            color: #4a5568;
+            font-weight: 700;
         }
         #controls {
             display: flex;
@@ -27,45 +33,73 @@
             flex-wrap: wrap;
         }
         #controls select {
-            padding: 8px 12px;
+            padding: 10px 15px;
             border-radius: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid #ced4da;
             background-color: #fff;
-            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9em;
         }
         #games-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
             margin: 0 auto;
         }
+
+        /* Krok 2: Przeprojektowanie wyglądu karty gry */
         .game-card {
-            border: 1px solid #ddd;
-            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
             overflow: hidden;
             background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
         }
         .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
         .game-card img {
             width: 100%;
-            height: 140px;
+            height: 160px;
             object-fit: cover;
         }
         .game-card-content {
-            padding: 15px;
+            padding: 20px;
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
-        .game-card-content h3 { margin: 0 0 10px 0; font-size: 1.1em; }
-        .game-card-content p { margin: 0; font-size: 0.9em; color: #606770; }
-        .game-card-content .genres { margin-top: 10px; font-size: 0.8em; color: #0d6efd; font-weight: 500; }
+        .game-card-content h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.25em;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        .game-card-content p {
+            margin: 0 0 4px 0;
+            font-size: 0.9em;
+            color: #718096;
+        }
+        .genre-tags-container {
+            margin-top: auto;
+            padding-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .genre-tag {
+            background-color: #eef2ff;
+            color: #4338ca;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -75,7 +109,7 @@
         <div id="controls">
             <select id="genre-filter">
                 <option value="">Filtruj po gatunku...</option>
-                </select>
+            </select>
             <select id="sort-control">
                 <option value="">Sortuj domyślnie</option>
                 <option value="title">Tytuł (A-Z)</option>
@@ -103,7 +137,7 @@
              * @param {Array} games - Tablica obiektów gier do wyświetlenia.
              */
             const renderGames = (games) => {
-                gamesContainer.innerHTML = ''; // Wyczyść kontener
+                gamesContainer.innerHTML = '';
                 if (games.length === 0) {
                     gamesContainer.innerHTML = '<p>Nie znaleziono gier spełniających wybrane kryteria.</p>';
                     return;
@@ -111,32 +145,36 @@
                 games.forEach(game => {
                     const card = document.createElement('div');
                     card.className = 'game-card';
+                    
+                    // Krok 3: Zmodyfikowany kod generujący HTML karty
+                    const genresHTML = game.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
+                    
                     card.innerHTML = `
                         <img src="${game.cover_image}" alt="Okładka gry ${game.title}">
                         <div class="game-card-content">
-                            <h3>${game.title}</h3>
-                            <p>Data wydania: ${game.release_date}</p>
-                            <p class="genres">${game.genres.join(', ')}</p>
+                            <div>
+                                <h3>${game.title}</h3>
+                                <p>Data wydania: ${game.release_date}</p>
+                                <p>Deweloper: ${game.developer || 'Brak danych'}</p>
+                            </div>
+                            <div class="genre-tags-container">
+                                ${genresHTML}
+                            </div>
                         </div>
                     `;
                     gamesContainer.appendChild(card);
                 });
             };
-
-            /**
-             * Funkcja pobierająca gry z API na podstawie wybranych filtrów.
-             */
+            
+            // Poniższe funkcje pozostają bez zmian
             const fetchFilteredGames = async () => {
                 const genre = genreFilter.value;
                 const sort = sortControl.value;
-                
                 const params = new URLSearchParams();
                 if (genre) params.append('genre', genre);
                 if (sort) params.append('sort', sort);
-
                 const queryString = params.toString();
                 const url = `/api/games${queryString ? '?' + queryString : ''}`;
-
                 try {
                     gamesContainer.innerHTML = '<p>Ładowanie gier...</p>';
                     const response = await fetch(url);
@@ -148,22 +186,14 @@
                     console.error('Błąd podczas pobierania filtrowanych gier:', error);
                 }
             };
-
-            /**
-             * Funkcja pobierająca unikalne gatunki i wypełniająca listę wyboru.
-             */
             const setupGenreFilter = async () => {
                 try {
                     const response = await fetch('/api/games');
                     if (!response.ok) throw new Error('Nie można pobrać gatunków.');
                     const games = await response.json();
-                    
                     const allGenres = new Set();
                     games.forEach(game => game.genres.forEach(genre => allGenres.add(genre)));
-
-                    // Sortowanie alfabetyczne gatunków
                     const sortedGenres = [...allGenres].sort();
-                    
                     sortedGenres.forEach(genre => {
                         const option = document.createElement('option');
                         option.value = genre;
@@ -175,16 +205,12 @@
                 }
             };
 
-            // Krok 4: Dodanie nasłuchiwania na zdarzenia
             genreFilter.addEventListener('change', fetchFilteredGames);
             sortControl.addEventListener('change', fetchFilteredGames);
-
-            // Inicjalizacja aplikacji
             const init = async () => {
-                await setupGenreFilter(); // Najpierw wypełnij listę gatunków
-                await fetchFilteredGames(); // Następnie załaduj gry
+                await setupGenreFilter();
+                await fetchFilteredGames();
             };
-
             init();
         });
     </script>
