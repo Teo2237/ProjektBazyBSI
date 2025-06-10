@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, abort
+from flask import Flask, jsonify, render_template, abort, request
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import os
@@ -17,17 +17,55 @@ def index():
     """
     return render_template('index.html')
 
+# --- ZMODYFIKOWANY ENDPOINT - ZADANIE 2.3 ---
 @app.route('/api/games', methods=['GET'])
 def get_games():
     """
     Zwraca listę wszystkich gier z bazy danych.
+    Obsługuje filtrowanie po gatunku (np. ?genre=RPG)
+    oraz sortowanie (np. ?sort=title lub ?sort=-release_date).
     """
     games_collection = db.games
+    query_filter = {}
+    sort_criteria = []
+
+    # Krok 1: Implementacja filtrowania po gatunku
+    genre_param = request.args.get('genre')
+    if genre_param:
+        # Dodajemy warunek do słownika z filtrami.
+        # Znajdzie gry, które w tablicy 'genres' mają podaną wartość.
+        query_filter['genres'] = genre_param
+
+    # Krok 2: Implementacja sortowania
+    sort_param = request.args.get('sort')
+    if sort_param:
+        sort_field = sort_param
+        # Domyślnie sortujemy rosnąco (wartość 1 w MongoDB)
+        sort_order = 1
+        
+        # Jeśli parametr zaczyna się od '-', sortujemy malejąco
+        if sort_param.startswith('-'):
+            # Wartość -1 w MongoDB oznacza sortowanie malejące
+            sort_order = -1
+            # Usuwamy '-' z nazwy pola do sortowania
+            sort_field = sort_param[1:]
+        
+        # Upewniamy się, że sortowanie odbywa się po dozwolonych polach
+        if sort_field in ['title', 'release_date']:
+            sort_criteria.append((sort_field, sort_order))
+
+    # Budujemy zapytanie - najpierw filtrujemy...
+    cursor = games_collection.find(query_filter)
+
+    # ...a następnie, jeśli zdefiniowano sortowanie, dodajemy je do zapytania
+    if sort_criteria:
+        cursor = cursor.sort(sort_criteria)
+    
     games_list = []
-    for game in games_collection.find({}):
-        # Konwersja ObjectId na string, aby był serializowalny do JSON
+    for game in cursor:
         game['_id'] = str(game['_id'])
         games_list.append(game)
+        
     return jsonify(games_list)
 
 # --- NOWY ENDPOINT - ZADANIE 2.2 ---
