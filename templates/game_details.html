@@ -6,37 +6,52 @@
     <title>Szczegóły gry</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px 40px;
-            color: #212529;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 20px auto;
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px 40px; color: #212529; }
+        .container { max-width: 1100px; margin: 20px auto; }
+        .back-button { display: inline-block; margin-bottom: 25px; color: #4a5568; text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
+        .back-button:hover { color: #0d6efd; }
+        
+        /* Krok 3: Style dla strony szczegółów */
+        #game-details-container {
             background-color: #fff;
-            padding: 30px;
+            padding: 40px;
             border-radius: 16px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
         }
-        .back-button {
-            display: inline-block;
-            margin-bottom: 25px;
+        .cover-image img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .game-info h1 {
+            margin-top: 0;
+            font-size: 2.5em;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .game-info .description {
+            margin-top: 20px;
+            line-height: 1.7;
             color: #4a5568;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
         }
-        .back-button:hover {
-            color: #0d6efd;
+        .meta-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
         }
-        /* Ten kontener zostanie wypełniony danymi w kolejnym kroku */
-        #game-details-container {
-            min-height: 200px;
+        .meta-info p { margin: 8px 0; }
+        .meta-info strong { color: #1a202c; }
+        .genre-tags-container { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .genre-tag { background-color: #eef2ff; color: #4338ca; padding: 4px 12px; border-radius: 9999px; font-size: 0.85em; font-weight: 500; }
+
+        @media (max-width: 768px) {
+            #game-details-container { grid-template-columns: 1fr; }
+            .game-info h1 { font-size: 2em; }
         }
     </style>
 </head>
@@ -44,15 +59,60 @@
 
     <div class="container">
         <a href="/" class="back-button">&larr; Powrót do katalogu</a>
-        
         <div id="game-details-container">
             <p>Ładowanie danych gry...</p>
         </div>
     </div>
 
     <script>
-        // Cała logika pobierania i wyświetlania danych gry
-        // zostanie dodana tutaj w Fazie 3 naszego planu.
+        // Krok 2: Logika pobierania i wyświetlania danych
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('game-details-container');
+
+            try {
+                // Wyciągnij ID gry z adresu URL
+                const pathParts = window.location.pathname.split('/');
+                const gameId = pathParts[pathParts.length - 1];
+
+                if (!gameId) {
+                    throw new Error('Nie znaleziono ID gry w adresie URL.');
+                }
+
+                // Pobierz dane gry z API
+                const response = await fetch(`/api/games/${gameId}`);
+                if (!response.ok) {
+                    throw new Error(`Nie udało się pobrać danych. Status: ${response.status}`);
+                }
+                const game = await response.json();
+
+                // Zaktualizuj tytuł strony
+                document.title = game.title;
+                
+                // Przygotuj tagi gatunków
+                const genresHTML = game.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
+
+                // Wypełnij kontener danymi
+                container.innerHTML = `
+                    <div class="cover-image">
+                        <img src="${game.cover_image}" alt="Okładka gry ${game.title}">
+                    </div>
+                    <div class="game-info">
+                        <h1>${game.title}</h1>
+                        <div class="meta-info">
+                            <p><strong>Deweloper:</strong> ${game.developer || 'Brak danych'}</p>
+                            <p><strong>Wydawca:</strong> ${game.publisher || 'Brak danych'}</p>
+                            <p><strong>Data wydania:</strong> ${game.release_date}</p>
+                        </div>
+                        <div class="genre-tags-container">${genresHTML}</div>
+                        <p class="description">${game.description || 'Brak opisu.'}</p>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Błąd:', error);
+                container.innerHTML = `<p style="color: red;">Wystąpił błąd podczas ładowania gry: ${error.message}</p>`;
+            }
+        });
     </script>
 
 </body>
