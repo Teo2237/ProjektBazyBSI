@@ -16,11 +16,21 @@ def index():
     """Serwuje główną stronę aplikacji."""
     return render_template('index.html')
 
-# NOWA TRASA DO PANELU ADMINA
 @app.route('/admin')
 def admin_panel():
     """Serwuje stronę panelu administracyjnego."""
     return render_template('admin.html')
+
+# --- NOWA TRASA DLA STRONY SZCZEGÓŁÓW GRY (Faza 2) ---
+@app.route('/games/<game_id>')
+def game_details_page(game_id):
+    """
+    Serwuje dedykowaną stronę dla pojedynczej gry.
+    Zmienna 'game_id' nie jest tu używana, ale jest częścią wzorca URL.
+    JavaScript na stronie docelowej użyje jej do pobrania danych z API.
+    """
+    return render_template('game_details.html')
+# --- Koniec nowego fragmentu ---
 
 @app.route('/api/games', methods=['GET'])
 def get_games():
@@ -70,7 +80,7 @@ def get_game_details(game_id):
         abort(404, description="Game not found.")
 
 # === ENDPOINTY ADMINISTRACYJNE (CRUD) ===
-
+# ... (reszta kodu bez zmian) ...
 @app.route('/api/admin/games', methods=['POST'])
 def add_game():
     """Dodaje nową grę do bazy danych (operacja INSERT)."""
