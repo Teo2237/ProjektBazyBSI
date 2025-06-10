@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, abort, request
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import os
+import math # Krok 1: Dodany import
 
 app = Flask(__name__)
 
@@ -21,24 +22,22 @@ def admin_panel():
     """Serwuje stronę panelu administracyjnego."""
     return render_template('admin.html')
 
-# --- NOWA TRASA DLA STRONY SZCZEGÓŁÓW GRY (Faza 2) ---
 @app.route('/games/<game_id>')
 def game_details_page(game_id):
-    """
-    Serwuje dedykowaną stronę dla pojedynczej gry.
-    Zmienna 'game_id' nie jest tu używana, ale jest częścią wzorca URL.
-    JavaScript na stronie docelowej użyje jej do pobrania danych z API.
-    """
+    """Serwuje dedykowaną stronę dla pojedynczej gry."""
     return render_template('game_details.html')
-# --- Koniec nowego fragmentu ---
 
+# --- ZMODYFIKOWANY ENDPOINT - ZADANIE 4.1 ---
 @app.route('/api/games', methods=['GET'])
 def get_games():
-    """Zwraca listę wszystkich gier z opcją filtrowania i sortowania."""
+    """
+    Zwraca listę gier z opcją filtrowania, sortowania i paginacji.
+    """
     games_collection = db.games
     query_filter = {}
     sort_criteria = []
 
+    # --- Filtrowanie i sortowanie (bez zmian) ---
     genre_param = request.args.get('genre')
     if genre_param:
         query_filter['genres'] = genre_param
@@ -53,7 +52,25 @@ def get_games():
         if sort_field in ['title', 'release_date']:
             sort_criteria.append((sort_field, sort_order))
 
-    cursor = games_collection.find(query_filter)
+    # Krok 2: Implementacja logiki paginacji
+    try:
+        page = int(request.args.get('page', 1))
+        limit = int(request.args.get('limit', 12)) # Ustawiamy domyślny limit na 12 gier
+    except ValueError:
+        page = 1
+        limit = 12
+
+    # Pobieramy całkowitą liczbę dokumentów pasujących do filtra
+    total_games = games_collection.count_documents(query_filter)
+    
+    # Obliczamy całkowitą liczbę stron
+    total_pages = math.ceil(total_games / limit) if total_games > 0 else 1
+    
+    # Obliczamy, ile dokumentów pominąć (skip)
+    skip_count = (page - 1) * limit
+
+    # Budujemy finalne zapytanie z paginacją
+    cursor = games_collection.find(query_filter).skip(skip_count).limit(limit)
     if sort_criteria:
         cursor = cursor.sort(sort_criteria)
     
@@ -61,17 +78,27 @@ def get_games():
     for game in games_list:
         game['_id'] = str(game['_id'])
         
-    return jsonify(games_list)
+    # Krok 3: Przygotowanie nowego formatu odpowiedzi
+    response_data = {
+        'pagination': {
+            'current_page': page,
+            'total_pages': total_pages,
+            'total_games': total_games,
+            'limit': limit
+        },
+        'games': games_list
+    }
+        
+    return jsonify(response_data)
 
 @app.route('/api/games/<game_id>', methods=['GET'])
 def get_game_details(game_id):
-    """Zwraca szczegółowe dane jednej gry na podstawie jej ID."""
+    # ... (bez zmian) ...
     games_collection = db.games
     try:
         obj_id = ObjectId(game_id)
     except Exception:
         abort(400, description="Invalid ID format.")
-
     game = games_collection.find_one({'_id': obj_id})
     if game:
         game['_id'] = str(game['_id'])
@@ -83,20 +110,16 @@ def get_game_details(game_id):
 # ... (reszta kodu bez zmian) ...
 @app.route('/api/admin/games', methods=['POST'])
 def add_game():
-    """Dodaje nową grę do bazy danych (operacja INSERT)."""
     if not request.json or not 'title' in request.json:
         abort(400, description="Missing 'title' in request body.")
-    
     new_game_data = request.get_json()
-    games_collection = db.games
-    result = games_collection.insert_one(new_game_data)
-    created_game = games_collection.find_one({'_id': result.inserted_id})
+    result = db.games.insert_one(new_game_data)
+    created_game = db.games.find_one({'_id': result.inserted_id})
     created_game['_id'] = str(created_game['_id'])
     return jsonify(created_game), 201
 
 @app.route('/api/admin/games/<game_id>', methods=['PUT'])
 def update_game(game_id):
-    """Aktualizuje istniejącą grę (operacja UPDATE)."""
     if not request.json:
         abort(400, description="Request body cannot be empty.")
     try:
@@ -114,7 +137,6 @@ def update_game(game_id):
 
 @app.route('/api/admin/games/<game_id>', methods=['DELETE'])
 def delete_game(game_id):
-    """Usuwa grę z bazy danych (operacja DELETE)."""
     try:
         obj_id = ObjectId(game_id)
     except Exception:
