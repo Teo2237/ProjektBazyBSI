@@ -1,0 +1,30 @@
+# docker-compose.yml
+
+services:
+  # Usługa 1: Twoja aplikacja backendowa (Flask)
+  projekt-gry:
+    command: sleep infinity
+    build: 
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    # ports:
+      # - "5000:5000"  # Mapuj port 5000 z kontenera na port 5000 na Twoim komputerze
+    volumes:
+      - ..:/workspaces:cached # Mapuj kod źródłowy, aby zmiany były widoczne bez przebudowywania obrazu
+    environment:
+      - MONGO_URI=mongodb://mongo:mongo@mongo:27017/gamesDB # Przekaż adres bazy danych jako zmienną środowiskową
+      - FLASK_APP=app.py
+      - FLASK_ENV=development # Uruchom Flask w trybie deweloperskim (automatyczne przeładowanie)
+  # Usługa 2: Baza danych MongoDB
+  mongo:
+    image: mongo:latest # Użyj oficjalnego obrazu MongoDB
+    ports:
+      - "27017:27017" # Mapuj domyślny port MongoDB
+    volumes:
+      - mongo-data:/data/db # Zapisuj dane bazy, aby nie zniknęły po restarcie kontenera
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+
+volumes:
+  mongo-data:
