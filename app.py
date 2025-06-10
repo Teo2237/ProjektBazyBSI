@@ -6,8 +6,8 @@ import os
 app = Flask(__name__)
 
 # --- Połączenie z MongoDB ---
-client = MongoClient("mongodb://mongodb:27017/") 
-db = client.gamesdb
+client = MongoClient(os.environ.get("MONGO_URI")) 
+db = client.gamesDB
 
 # === ENDPOINTY PUBLICZNE ===
 
