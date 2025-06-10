@@ -12,7 +12,7 @@ services:
     volumes:
       - ..:/workspaces:cached # Mapuj kod źródłowy, aby zmiany były widoczne bez przebudowywania obrazu
     environment:
-      - MONGO_URI=mongodb://mongo:mongo@mongo:27017/gamesDB # Przekaż adres bazy danych jako zmienną środowiskową
+      - MONGO_URI=mongodb://mongo:mongo@mongo:27017 # Przekaż adres bazy danych jako zmienną środowiskową
       - FLASK_APP=app.py
       - FLASK_ENV=development # Uruchom Flask w trybie deweloperskim (automatyczne przeładowanie)
   # Usługa 2: Baza danych MongoDB
@@ -28,3 +28,4 @@ services:
 
 volumes:
   mongo-data:
+  

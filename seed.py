@@ -4,8 +4,8 @@ from pymongo import MongoClient
 
 # Pobierz URI do połączenia z MongoDB ze zmiennej środowiskowej,
 # tak samo jak w głównej aplikacji Flask.
-# MONGO_URI = os.environ.get("MONGO_URI")
-MONGO_URI = "mongodb://mongo:mongo@mongo:27017"
+MONGO_URI = os.environ.get("MONGO_URI")
+# MONGO_URI = "mongodb://mongo:mongo@mongo:27017"
 
 # Dane do wstawienia do bazy
 GAMES_DATA = [
