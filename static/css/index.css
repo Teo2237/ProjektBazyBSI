@@ -1,9 +1,16 @@
+ html {
+     height: 100%;
+ }
+
  body {
      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
      background-color: #f8f9fa;
      margin: 0;
      padding: 20px;
      color: #212529;
+     display: flex;
+     flex-direction: column;
+     min-height: 100%;
  }
 
  /* UJEDNOLICONE STYLE DLA NAGŁÓWKA */
@@ -57,12 +64,13 @@
 
  main {
      padding: 20px 40px;
+     flex-grow: 1;
  }
 
  .title-header {
      text-align: center;
      margin: 0;
-     
+
  }
 
  h1 {
