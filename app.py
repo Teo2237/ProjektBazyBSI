@@ -140,36 +140,47 @@ def get_game_details(game_id):
 # === ENDPOINTY ADMINISTRACYJNE (CRUD) ===
 # ... (reszta kodu bez zmian) ...
 @app.route('/api/admin/games', methods=['POST'])
-@login_required # Zastosowanie dekoratora
+@login_required
 def add_game():
-    """Dodaje nową grę do bazy danych (operacja INSERT)."""
     if not request.json or not 'title' in request.json:
         abort(400, description="Missing 'title' in request body.")
     
     new_game_data = request.get_json()
-    games_collection = db.games
-    result = games_collection.insert_one(new_game_data)
-    created_game = games_collection.find_one({'_id': result.inserted_id})
+    
+    # Przetwarzanie pola screenshots z bloku tekstu na tablicę URL-i
+    if 'screenshots' in new_game_data and isinstance(new_game_data['screenshots'], str):
+        new_game_data['screenshots'] = [url.strip() for url in new_game_data['screenshots'].splitlines() if url.strip()]
+    
+    result = db.games.insert_one(new_game_data)
+    created_game = db.games.find_one({'_id': result.inserted_id})
     created_game['_id'] = str(created_game['_id'])
     return jsonify(created_game), 201
 
 @app.route('/api/admin/games/<game_id>', methods=['PUT'])
-@login_required # Zastosowanie dekoratora
+@login_required
 def update_game(game_id):
-    """Aktualizuje istniejącą grę (operacja UPDATE)."""
     if not request.json:
         abort(400, description="Request body cannot be empty.")
     try:
         obj_id = ObjectId(game_id)
     except Exception:
         abort(400, description="Invalid ID format.")
+        
     update_data = request.get_json()
     update_data.pop('_id', None)
+
+    # Przetwarzanie pola screenshots z bloku tekstu na tablicę URL-i
+    if 'screenshots' in update_data and isinstance(update_data['screenshots'], str):
+        update_data['screenshots'] = [url.strip() for url in update_data['screenshots'].splitlines() if url.strip()]
+
     result = db.games.update_one({'_id': obj_id}, {'$set': update_data})
+    
     if result.matched_count == 0:
         abort(404, description="Game not found.")
+        
     updated_game = db.games.find_one({'_id': obj_id})
     updated_game['_id'] = str(updated_game['_id'])
+    
     return jsonify(updated_game)
 
 @app.route('/api/admin/games/<game_id>', methods=['DELETE'])
