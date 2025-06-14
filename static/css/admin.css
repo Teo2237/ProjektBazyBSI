@@ -1,6 +1,8 @@
 /* Nowe reguły dla "przyklejonej stopki" */
-*, *::before, *::after {
-  box-sizing: border-box;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 html {
@@ -261,4 +263,19 @@ li:last-child {
         display: block;
         /* Pokazujemy przycisk hamburgera */
     }
+}
+
+.admin-layout #page-header {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+.admin-layout #page-footer {
+    margin-top: 60px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+
 }
