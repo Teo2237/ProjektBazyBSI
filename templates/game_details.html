@@ -56,64 +56,66 @@
     </style>
 </head>
 <body>
-
-    <div class="container">
+    {% include '_header.html' %}
+    <main class="container">
+   
         <a href="/" class="back-button">&larr; Powrót do katalogu</a>
         <div id="game-details-container">
             <p>Ładowanie danych gry...</p>
         </div>
-    </div>
+    
 
-    <script>
-        // Krok 2: Logika pobierania i wyświetlania danych
-        document.addEventListener('DOMContentLoaded', async () => {
-            const container = document.getElementById('game-details-container');
+        <script>
+            // Krok 2: Logika pobierania i wyświetlania danych
+            document.addEventListener('DOMContentLoaded', async () => {
+                const container = document.getElementById('game-details-container');
 
-            try {
-                // Wyciągnij ID gry z adresu URL
-                const pathParts = window.location.pathname.split('/');
-                const gameId = pathParts[pathParts.length - 1];
+                try {
+                    // Wyciągnij ID gry z adresu URL
+                    const pathParts = window.location.pathname.split('/');
+                    const gameId = pathParts[pathParts.length - 1];
 
-                if (!gameId) {
-                    throw new Error('Nie znaleziono ID gry w adresie URL.');
-                }
+                    if (!gameId) {
+                        throw new Error('Nie znaleziono ID gry w adresie URL.');
+                    }
 
-                // Pobierz dane gry z API
-                const response = await fetch(`/api/games/${gameId}`);
-                if (!response.ok) {
-                    throw new Error(`Nie udało się pobrać danych. Status: ${response.status}`);
-                }
-                const game = await response.json();
+                    // Pobierz dane gry z API
+                    const response = await fetch(`/api/games/${gameId}`);
+                    if (!response.ok) {
+                        throw new Error(`Nie udało się pobrać danych. Status: ${response.status}`);
+                    }
+                    const game = await response.json();
 
-                // Zaktualizuj tytuł strony
-                document.title = game.title;
-                
-                // Przygotuj tagi gatunków
-                const genresHTML = game.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
+                    // Zaktualizuj tytuł strony
+                    document.title = game.title;
+                    
+                    // Przygotuj tagi gatunków
+                    const genresHTML = game.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
 
-                // Wypełnij kontener danymi
-                container.innerHTML = `
-                    <div class="cover-image">
-                        <img src="${game.cover_image}" alt="Okładka gry ${game.title}">
-                    </div>
-                    <div class="game-info">
-                        <h1>${game.title}</h1>
-                        <div class="meta-info">
-                            <p><strong>Deweloper:</strong> ${game.developer || 'Brak danych'}</p>
-                            <p><strong>Wydawca:</strong> ${game.publisher || 'Brak danych'}</p>
-                            <p><strong>Data wydania:</strong> ${game.release_date}</p>
+                    // Wypełnij kontener danymi
+                    container.innerHTML = `
+                        <div class="cover-image">
+                            <img src="${game.cover_image}" alt="Okładka gry ${game.title}">
                         </div>
-                        <div class="genre-tags-container">${genresHTML}</div>
-                        <p class="description">${game.description || 'Brak opisu.'}</p>
-                    </div>
-                `;
+                        <div class="game-info">
+                            <h1>${game.title}</h1>
+                            <div class="meta-info">
+                                <p><strong>Deweloper:</strong> ${game.developer || 'Brak danych'}</p>
+                                <p><strong>Wydawca:</strong> ${game.publisher || 'Brak danych'}</p>
+                                <p><strong>Data wydania:</strong> ${game.release_date}</p>
+                            </div>
+                            <div class="genre-tags-container">${genresHTML}</div>
+                            <p class="description">${game.description || 'Brak opisu.'}</p>
+                        </div>
+                    `;
 
-            } catch (error) {
-                console.error('Błąd:', error);
-                container.innerHTML = `<p style="color: red;">Wystąpił błąd podczas ładowania gry: ${error.message}</p>`;
-            }
-        });
-    </script>
-
+                } catch (error) {
+                    console.error('Błąd:', error);
+                    container.innerHTML = `<p style="color: red;">Wystąpił błąd podczas ładowania gry: ${error.message}</p>`;
+                }
+            });
+        </script>
+    </main>
+        {% include '_footer.html' %}
 </body>
 </html>

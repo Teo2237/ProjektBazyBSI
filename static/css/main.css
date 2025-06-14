@@ -25,3 +25,55 @@ body {
     padding: 20px;
     line-height: 1.6;
 }
+
+/* Style dla głównego kontenera strony */
+.container {
+    max-width: 1200px;
+    margin: 20px auto; /* 20px odstępu góra/dół, auto na boki (centrowanie) */
+    padding: 0 20px;   /* Wewnętrzny odstęp na boki */
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* Style dla paska nawigacji (header) */
+.navbar {
+    background-color: var(--surface-color);
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.navbar-brand a {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.navbar-nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav a:hover {
+    color: var(--primary-color);
+}
+
+/* Style dla stopki (footer) */
+.footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 1rem;
+    color: var(--text-light-color);
+    font-size: 0.9rem;
+}
