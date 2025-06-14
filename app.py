@@ -49,7 +49,7 @@ def login_page():
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
-    return redirect(url_for('login_page'))
+    return redirect(url_for('index'))
 
 
 # === ENDPOINTY PUBLICZNE ===
