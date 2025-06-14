@@ -124,5 +124,20 @@ def delete_game(game_id):
         abort(404, description="Game not found.")
     return jsonify({'message': 'Game deleted successfully'})
 
+@app.route('/about')
+def about_page():
+    """Serwuje stronę 'O nas'."""
+    return render_template('about.html')
+
+@app.route('/contact')
+def contact_page():
+    """Serwuje stronę 'Kontakt'."""
+    return render_template('contact.html')
+
+@app.route('/faq')
+def faq_page():
+    """Serwuje stronę 'FAQ'."""
+    return render_template('faq.html')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
