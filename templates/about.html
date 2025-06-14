@@ -17,8 +17,12 @@
         .admin-btn { background-color: #28a745; color: #fff !important; padding: 9px 18px; border-radius: 8px; transition: background-color 0.2s; }
         .admin-btn:hover { background-color: #218838; }
         main { padding: 20px 40px; max-width: 900px; margin: 40px auto; }
-        h1 { font-size: 2.5em; color: #4a5568; }
+        h1 { font-size: 2.5em; color: #4a5568; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        h2 { font-size: 1.8em; color: #4a5568; margin-top: 40px; }
         p { line-height: 1.8; font-size: 1.1em; }
+        .tech-stack { list-style-type: none; padding: 0; }
+        .tech-stack li { background-color: #eef2ff; margin-bottom: 10px; padding: 15px; border-radius: 8px; font-size: 1.1em; }
+        .tech-stack strong { color: #4338ca; }
     </style>
 </head>
 <body>
@@ -35,13 +39,21 @@
     </header>
 
     <main>
-        <h1>O nas</h1>
+        <h1>Nasza Misja</h1>
         <p>
-            Witaj w <strong>GameBase</strong>! Jesteśmy prostym, ale ambitnym projektem stworzonym z pasji do gier komputerowych. Naszym celem jest dostarczenie przejrzystego i łatwego w obsłudze katalogu gier, który będzie stale rozwijany.
+            Witaj w <strong>GameBase</strong> – projekcie stworzonym z czystej pasji do gier i technologii. Naszym celem jest zbudowanie szybkiego, przejrzystego i wolnego od reklam katalogu gier, który będzie przyjazny zarówno dla casualowych graczy, jak i weteranów. Wierzymy, że dostęp do informacji powinien być prosty i przyjemny.
         </p>
         <p>
-            Cała aplikacja została zbudowana przy użyciu nowoczesnych technologii, w tym frameworka <strong>Flask</strong> w języku Python, nierelacyjnej bazy danych <strong>MongoDB</strong> oraz technologii konteneryzacji <strong>Docker</strong>.
+            To nie jest wielka, korporacyjna witryna. To projekt hobbystyczny, który powstał jako poligon doświadczalny do nauki i praktycznego zastosowania nowoczesnych narzędzi deweloperskich.
         </p>
+
+        <h2>Technologie</h2>
+        <p>Cała platforma została zbudowana w oparciu o starannie dobrany zestaw technologii:</p>
+        <ul class="tech-stack">
+            <li><strong>Flask:</strong> Lekki i elastyczny framework webowy w języku Python, który napędza cały backend naszej aplikacji.</li>
+            <li><strong>MongoDB:</strong> Nierelacyjna baza danych, idealna do przechowywania złożonych i różnorodnych danych o grach dzięki swojej elastycznej strukturze dokumentów.</li>
+            <li><strong>Docker:</strong> Technologia konteneryzacji, która pozwala na łatwe uruchomienie i wdrożenie całej aplikacji w spójnym środowisku, niezależnie od maszyny.</li>
+        </ul>
     </main>
 
 </body>

@@ -17,10 +17,10 @@
         .admin-btn { background-color: #28a745; color: #fff !important; padding: 9px 18px; border-radius: 8px; transition: background-color 0.2s; }
         .admin-btn:hover { background-color: #218838; }
         main { padding: 20px 40px; max-width: 900px; margin: 40px auto; }
-        h1 { font-size: 2.5em; color: #4a5568; }
-        .faq-item { margin-bottom: 30px; }
-        .faq-item h3 { margin-bottom: 5px; }
-        .faq-item p { margin-top: 0; line-height: 1.7; }
+        h1 { font-size: 2.5em; color: #4a5568; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .faq-item { margin-bottom: 35px; }
+        .faq-item h3 { margin-bottom: 10px; font-size: 1.3em; }
+        .faq-item p { margin-top: 0; line-height: 1.7; color: #4a5568; }
     </style>
 </head>
 <body>
@@ -37,22 +37,28 @@
     </header>
 
     <main>
-        <h1>Często Zadawane Pytania (FAQ)</h1>
+        <h1>Często Zadawane Pytania</h1>
         
         <div class="faq-item">
             <h3>Jak mogę zasugerować dodanie nowej gry do katalogu?</h3>
-            <p>Najlepiej skontaktować się z nami mailowo, podając tytuł gry oraz, jeśli to możliwe, link do jej strony w sklepie Steam lub na oficjalnej stronie producenta.</p>
+            <p>To proste! Wystarczy, że wyślesz nam e-mail (adres znajdziesz w zakładce "Kontakt"), podając tytuł gry. Jeśli masz link do jej oficjalnej strony lub sklepu, będzie to dla nas duże ułatwienie. Każda propozycja jest mile widziana!</p>
         </div>
 
         <div class="faq-item">
-            <h3>Jakie technologie zostały użyte do budowy tej strony?</h3>
-            <p>Aplikacja działa w oparciu o framework Flask (Python), bazę danych MongoDB, a całość jest skonteneryzowana za pomocą Dockera.</p>
+            <h3>Czy ten projekt jest "open source"?</h3>
+            <p>Tak, wierzymy w siłę otwartego oprogramowania. Cały kod źródłowy aplikacji jest publicznie dostępny. Link do repozytorium znajdziesz w zakładce "Kontakt". Zachęcamy do przeglądania kodu, a nawet do zgłaszania swoich propozycji zmian.</p>
         </div>
 
         <div class="faq-item">
-            <h3>Czy planowany jest dalszy rozwój aplikacji?</h3>
-            <p>Tak! Projekt jest stale rozwijany. W planach mamy m.in. system ocen i recenzji, wyszukiwarkę pełnotekstową oraz wiele innych usprawnień.</p>
+            <h3>Jakie są plany na przyszłość?</h3>
+            <p>Mamy głowy pełne pomysłów! W najbliższej przyszłości planujemy wdrożyć system ocen i recenzji użytkowników, zaawansowaną wyszukiwarkę oraz sekcję z aktualnościami. Chcemy, aby GameBase stało się jeszcze bardziej interaktywne i użyteczne.</p>
         </div>
+        
+        <div class="faq-item">
+            <h3>Czy korzystanie z serwisu jest darmowe?</h3>
+            <p>Oczywiście. GameBase jest projektem hobbystycznym i w 100% darmowym. Naszym celem jest dzielenie się pasją, a nie zarabianie, dlatego na stronie nie znajdziesz żadnych reklam ani płatnych funkcji.</p>
+        </div>
+
     </main>
 
 </body>
