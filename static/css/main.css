@@ -1,0 +1,27 @@
+/* Plik: static/css/main.css */
+
+/* Krok 1: Definicja globalnej palety kolorów i czcionek za pomocą zmiennych CSS.
+   Dzięki temu możemy łatwo zmieniać wygląd całej strony w jednym miejscu.
+*/
+:root {
+    --primary-color: #6e48db; /* Główny, fioletowy kolor akcentu */
+    --secondary-color: #48a9db; /* Drugi, niebieski kolor */
+    --background-color: #f4f7f9; /* Jasne tło strony */
+    --surface-color: #ffffff;  /* Kolor tła dla "powierzchni" jak karty, formularze */
+    --text-color: #333333;     /* Podstawowy kolor tekstu */
+    --text-light-color: #6c757d; /* Jaśniejszy kolor tekstu dla opisów */
+    --border-color: #e0e0e0;    /* Kolor ramek */
+     --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* <-- NOWA WERSJA */
+}
+
+/* Krok 2: Zastosowanie globalnych stylów do elementu <body>.
+   To ustawienie będzie dziedziczone przez wszystkie elementy na stronie.
+*/
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
