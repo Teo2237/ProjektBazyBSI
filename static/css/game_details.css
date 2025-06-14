@@ -200,6 +200,40 @@ body {
     .game-info h1 {
         font-size: 2em;
     }
+
+    .header-nav {
+        /* Ukrywamy nawigację i zmieniamy jej pozycjonowanie */
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        /* Tuż pod nagłówkiem */
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-nav.mobile-active {
+        display: flex;
+        /* Pokazujemy menu po kliknięciu */
+    }
+
+    .header-nav a {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+        width: 100%;
+    }
+
+    .header-nav a.admin-btn {
+        border-radius: 0;
+    }
+
+    #hamburger-btn {
+        display: block;
+        /* Pokazujemy przycisk hamburgera */
+    }
 }
 
 /* Style dla stopki */
@@ -228,4 +262,29 @@ body {
 
 #page-footer .copyright {
     font-size: 0.9em;
+}
+
+/* Dodatkowe style dla nawigacji */
+#page-header {
+    position: relative;
+    /* Potrzebne do pozycjonowania menu mobilnego */
+}
+
+#hamburger-btn {
+    display: none;
+    /* Domyślnie ukryty na dużych ekranach */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1000;
+}
+
+#hamburger-btn .hamburger-line {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 5px 0;
+    transition: all 0.3s ease;
 }
