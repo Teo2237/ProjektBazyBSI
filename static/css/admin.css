@@ -209,8 +209,8 @@ li:last-child {
     transition: all 0.3s ease;
 }
 
-/* Media Query dla ekranów o szerokości do 768px (tablety i telefony) */
-@media (max-width: 768px) {
+/* Media Query dla ekranów o szerokości do 800px (tablety i telefony) */
+@media (max-width: 800px) {
     .header-nav {
         /* Ukrywamy nawigację i zmieniamy jej pozycjonowanie */
         display: none;
