@@ -1,22 +1,80 @@
-from flask import Flask, jsonify, render_template, abort, request
+from flask import Flask, jsonify, render_template, abort, request, session, redirect, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import os
+import math
+from functools import wraps # Potrzebne do stworzenia dekoratora
 
 app = Flask(__name__)
 
 # --- Połączenie z MongoDB ---
 client = MongoClient(os.environ.get("MONGO_URI")) 
 db = client.gamesDB
+# Krok 2: Konfiguracja sekretnego klucza dla sesji
+# W prawdziwej aplikacji klucz ten powinien być bardziej złożony i przechowywany w bezpiecznym miejscu
+app.secret_key = 'bardzo-tajny-klucz-do-zmiany'
+
+# Ustawienie stałych danych logowania (w praktyce powinny być np. w zmiennych środowiskowych)
+ADMIN_USERNAME = 'admin'
+ADMIN_PASSWORD = 'password'
+
+# Krok 4: Stworzenie dekoratora do zabezpieczania tras
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in' not in session:
+            # Dla zapytań API zwracamy błąd, dla stron - przekierowujemy
+            if request.path.startswith('/api/admin'):
+                return jsonify({'error': 'Wymagana autoryzacja'}), 401
+            return redirect(url_for('login_page'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# === NOWE TRASY LOGOWANIA ===
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_page():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['logged_in'] = True
+            return redirect(url_for('admin_panel'))
+        else:
+            error = 'Nieprawidłowy login lub hasło'
+    # Jeśli metoda to GET lub logowanie nie powiodło się, wyświetl formularz
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('login_page'))
+
 
 # === ENDPOINTY PUBLICZNE ===
-
+# ... (trasy /, /games/<game_id>, /about, /contact, /faq pozostają bez zmian) ...
 @app.route('/')
 def index():
-    """Serwuje główną stronę aplikacji."""
     return render_template('index.html')
 
+@app.route('/about')
+def about_page():
+    return render_template('about.html')
+
+@app.route('/contact')
+def contact_page():
+    return render_template('contact.html')
+
+@app.route('/faq')
+def faq_page():
+    return render_template('faq.html')
+
+
+# === ZABEZPIECZONE ENDPOINTY ADMINISTRACYJNE ===
+
 @app.route('/admin')
+@login_required  # Zastosowanie dekoratora
 def admin_panel():
     """Serwuje stronę panelu administracyjnego."""
     return render_template('admin.html')
@@ -82,6 +140,7 @@ def get_game_details(game_id):
 # === ENDPOINTY ADMINISTRACYJNE (CRUD) ===
 # ... (reszta kodu bez zmian) ...
 @app.route('/api/admin/games', methods=['POST'])
+@login_required # Zastosowanie dekoratora
 def add_game():
     """Dodaje nową grę do bazy danych (operacja INSERT)."""
     if not request.json or not 'title' in request.json:
@@ -95,6 +154,7 @@ def add_game():
     return jsonify(created_game), 201
 
 @app.route('/api/admin/games/<game_id>', methods=['PUT'])
+@login_required # Zastosowanie dekoratora
 def update_game(game_id):
     """Aktualizuje istniejącą grę (operacja UPDATE)."""
     if not request.json:
@@ -113,6 +173,7 @@ def update_game(game_id):
     return jsonify(updated_game)
 
 @app.route('/api/admin/games/<game_id>', methods=['DELETE'])
+@login_required # Zastosowanie dekoratora
 def delete_game(game_id):
     """Usuwa grę z bazy danych (operacja DELETE)."""
     try:
@@ -123,21 +184,6 @@ def delete_game(game_id):
     if result.deleted_count == 0:
         abort(404, description="Game not found.")
     return jsonify({'message': 'Game deleted successfully'})
-
-@app.route('/about')
-def about_page():
-    """Serwuje stronę 'O nas'."""
-    return render_template('about.html')
-
-@app.route('/contact')
-def contact_page():
-    """Serwuje stronę 'Kontakt'."""
-    return render_template('contact.html')
-
-@app.route('/faq')
-def faq_page():
-    """Serwuje stronę 'FAQ'."""
-    return render_template('faq.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
