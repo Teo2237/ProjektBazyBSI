@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/workspaces/static/css/main.css') }}">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
     <title>Panel Administracyjny</title>
     <style>
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; background-color: #f9f9f9; }
         .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         h1, h2 { color: #333; }
         form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
@@ -23,194 +22,191 @@
     </style>
 </head>
 <body>
-{% include '_header.html' %}
-<main class="container">
-        <div class="container">
-            <h1>Panel Administracyjny</h1>
 
-            <section id="add-form-container">
-                <h2>Dodaj nową grę</h2>
-                <form id="add-game-form">
-                    <input type="text" name="title" placeholder="Tytuł" required>
-                    <input type="date" name="release_date" required>
-                    <input type="text" name="genres" placeholder="Gatunki (oddzielone przecinkami)">
-                    <input type="text" name="developer" placeholder="Deweloper">
-                    <input type="text" name="publisher" placeholder="Wydawca">
-                    <input type="url" name="cover_image" placeholder="URL do okładki">
-                    <textarea name="description" placeholder="Opis"></textarea>
-                    <button type="submit">Dodaj grę</button>
-                </form>
-            </section>
+<div class="container">
+    <h1>Panel Administracyjny</h1>
 
-            <section>
-                <h2>Zarządzaj grami</h2>
-                <ul id="admin-games-list">
-                    </ul>
-            </section>
+    <section id="add-form-container">
+        <h2>Dodaj nową grę</h2>
+        <form id="add-game-form">
+            <input type="text" name="title" placeholder="Tytuł" required>
+            <input type="date" name="release_date" required>
+            <input type="text" name="genres" placeholder="Gatunki (oddzielone przecinkami)">
+            <input type="text" name="developer" placeholder="Deweloper">
+            <input type="text" name="publisher" placeholder="Wydawca">
+            <input type="url" name="cover_image" placeholder="URL do okładki">
+            <textarea name="description" placeholder="Opis"></textarea>
+            <button type="submit">Dodaj grę</button>
+        </form>
+    </section>
 
-            <section id="edit-form-container">
-                <h2>Edytuj grę</h2>
-                <form id="edit-game-form">
-                    <input type="hidden" name="id">
-                    <input type="text" name="title" placeholder="Tytuł" required>
-                    <input type="date" name="release_date" required>
-                    <input type="text" name="genres" placeholder="Gatunki (oddzielone przecinkami)">
-                    <input type="text" name="developer" placeholder="Deweloper">
-                    <input type="text" name="publisher" placeholder="Wydawca">
-                    <input type="url" name="cover_image" placeholder="URL do okładki">
-                    <textarea name="description" placeholder="Opis"></textarea>
-                    <button type="submit">Zapisz zmiany</button>
-                    <button type="button" id="cancel-edit">Anuluj</button>
-                </form>
-            </section>
+    <section>
+        <h2>Zarządzaj grami</h2>
+        <ul id="admin-games-list">
+            </ul>
+    </section>
 
-        </div>
+    <section id="edit-form-container">
+        <h2>Edytuj grę</h2>
+        <form id="edit-game-form">
+            <input type="hidden" name="id">
+            <input type="text" name="title" placeholder="Tytuł" required>
+            <input type="date" name="release_date" required>
+            <input type="text" name="genres" placeholder="Gatunki (oddzielone przecinkami)">
+            <input type="text" name="developer" placeholder="Deweloper">
+            <input type="text" name="publisher" placeholder="Wydawca">
+            <input type="url" name="cover_image" placeholder="URL do okładki">
+            <textarea name="description" placeholder="Opis"></textarea>
+            <button type="submit">Zapisz zmiany</button>
+            <button type="button" id="cancel-edit">Anuluj</button>
+        </form>
+    </section>
 
-        <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const addForm = document.getElementById('add-game-form');
-            const editFormContainer = document.getElementById('edit-form-container');
-            const editForm = document.getElementById('edit-game-form');
-            const gamesList = document.getElementById('admin-games-list');
-            const cancelEditBtn = document.getElementById('cancel-edit');
+</div>
 
-            const API_URL = '/api/admin/games';
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const addForm = document.getElementById('add-game-form');
+    const editFormContainer = document.getElementById('edit-form-container');
+    const editForm = document.getElementById('edit-game-form');
+    const gamesList = document.getElementById('admin-games-list');
+    const cancelEditBtn = document.getElementById('cancel-edit');
 
-            // Konwertuje dane z formularza na obiekt JSON
-            const getFormData = (form) => {
-                const formData = new FormData(form);
-                const data = {};
-                formData.forEach((value, key) => { data[key] = value; });
-                // Przekształca string z gatunkami na tablicę
-                if (data.genres) {
-                    data.genres = data.genres.split(',').map(g => g.trim());
-                } else {
-                    data.genres = [];
-                }
-                return data;
-            };
+    const API_URL = '/api/admin/games';
 
-            // Pobiera i wyświetla listę gier
-            const fetchAndDisplayGames = async () => {
+    // Konwertuje dane z formularza na obiekt JSON
+    const getFormData = (form) => {
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => { data[key] = value; });
+        // Przekształca string z gatunkami na tablicę
+        if (data.genres) {
+            data.genres = data.genres.split(',').map(g => g.trim());
+        } else {
+            data.genres = [];
+        }
+        return data;
+    };
+
+    // Pobiera i wyświetla listę gier
+    const fetchAndDisplayGames = async () => {
+        try {
+            const response = await fetch('/api/games');
+            const games = await response.json();
+            gamesList.innerHTML = '';
+            games.forEach(game => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${game.title}</span>
+                    <div class="buttons">
+                        <button class="edit-btn" data-id="${game._id}">Edytuj</button>
+                        <button class="delete-btn" data-id="${game._id}">Usuń</button>
+                    </div>
+                `;
+                gamesList.appendChild(li);
+            });
+        } catch (error) {
+            console.error('Błąd podczas pobierania gier:', error);
+        }
+    };
+
+    // Obsługa dodawania nowej gry
+    addForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = getFormData(addForm);
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (response.ok) {
+                addForm.reset();
+                fetchAndDisplayGames();
+            } else {
+                alert('Nie udało się dodać gry.');
+            }
+        } catch (error) {
+            console.error('Błąd:', error);
+        }
+    });
+
+    // Obsługa kliknięć na liście (Edytuj/Usuń)
+    gamesList.addEventListener('click', async (e) => {
+        const gameId = e.target.dataset.id;
+        if (!gameId) return;
+
+        // Usuwanie gry
+        if (e.target.classList.contains('delete-btn')) {
+            if (confirm('Czy na pewno chcesz usunąć tę grę?')) {
                 try {
-                    const response = await fetch('/api/games');
-                    const games = await response.json();
-                    gamesList.innerHTML = '';
-                    games.forEach(game => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `
-                            <span>${game.title}</span>
-                            <div class="buttons">
-                                <button class="edit-btn" data-id="${game._id}">Edytuj</button>
-                                <button class="delete-btn" data-id="${game._id}">Usuń</button>
-                            </div>
-                        `;
-                        gamesList.appendChild(li);
-                    });
-                } catch (error) {
-                    console.error('Błąd podczas pobierania gier:', error);
-                }
-            };
-
-            // Obsługa dodawania nowej gry
-            addForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const data = getFormData(addForm);
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data),
-                    });
+                    const response = await fetch(`${API_URL}/${gameId}`, { method: 'DELETE' });
                     if (response.ok) {
-                        addForm.reset();
                         fetchAndDisplayGames();
                     } else {
-                        alert('Nie udało się dodać gry.');
+                        alert('Nie udało się usunąć gry.');
                     }
                 } catch (error) {
                     console.error('Błąd:', error);
                 }
-            });
+            }
+        }
 
-            // Obsługa kliknięć na liście (Edytuj/Usuń)
-            gamesList.addEventListener('click', async (e) => {
-                const gameId = e.target.dataset.id;
-                if (!gameId) return;
-
-                // Usuwanie gry
-                if (e.target.classList.contains('delete-btn')) {
-                    if (confirm('Czy na pewno chcesz usunąć tę grę?')) {
-                        try {
-                            const response = await fetch(`${API_URL}/${gameId}`, { method: 'DELETE' });
-                            if (response.ok) {
-                                fetchAndDisplayGames();
-                            } else {
-                                alert('Nie udało się usunąć gry.');
-                            }
-                        } catch (error) {
-                            console.error('Błąd:', error);
-                        }
-                    }
-                }
-
-                // Edycja gry
-                if (e.target.classList.contains('edit-btn')) {
-                    const response = await fetch(`/api/games/${gameId}`);
-                    const game = await response.json();
-                    
-                    // Wypełnij formularz edycji
-                    editForm.elements.id.value = game._id;
-                    editForm.elements.title.value = game.title;
-                    editForm.elements.release_date.value = game.release_date;
-                    editForm.elements.genres.value = game.genres.join(', ');
-                    editForm.elements.developer.value = game.developer || '';
-                    editForm.elements.publisher.value = game.publisher || '';
-                    editForm.elements.cover_image.value = game.cover_image || '';
-                    editForm.elements.description.value = game.description || '';
-
-                    editFormContainer.style.display = 'block';
-                    addForm.style.display = 'none'; // Ukryj formularz dodawania
-                }
-            });
-
-            // Obsługa zapisu zmian w formularzu edycji
-            editForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const data = getFormData(editForm);
-                const gameId = data.id;
-                delete data.id; // Usuwamy ID z ciała zapytania
-                
-                try {
-                    const response = await fetch(`${API_URL}/${gameId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data),
-                    });
-
-                    if (response.ok) {
-                        editFormContainer.style.display = 'none';
-                        addForm.style.display = 'flex';
-                        fetchAndDisplayGames();
-                    } else {
-                        alert('Nie udało się zaktualizować gry.');
-                    }
-                } catch (error) {
-                    console.error('Błąd:', error);
-                }
-            });
+        // Edycja gry
+        if (e.target.classList.contains('edit-btn')) {
+            const response = await fetch(`/api/games/${gameId}`);
+            const game = await response.json();
             
-            // Anulowanie edycji
-            cancelEditBtn.addEventListener('click', () => {
+            // Wypełnij formularz edycji
+            editForm.elements.id.value = game._id;
+            editForm.elements.title.value = game.title;
+            editForm.elements.release_date.value = game.release_date;
+            editForm.elements.genres.value = game.genres.join(', ');
+            editForm.elements.developer.value = game.developer || '';
+            editForm.elements.publisher.value = game.publisher || '';
+            editForm.elements.cover_image.value = game.cover_image || '';
+            editForm.elements.description.value = game.description || '';
+
+            editFormContainer.style.display = 'block';
+            addForm.style.display = 'none'; // Ukryj formularz dodawania
+        }
+    });
+
+    // Obsługa zapisu zmian w formularzu edycji
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = getFormData(editForm);
+        const gameId = data.id;
+        delete data.id; // Usuwamy ID z ciała zapytania
+        
+        try {
+            const response = await fetch(`${API_URL}/${gameId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
                 editFormContainer.style.display = 'none';
                 addForm.style.display = 'flex';
-            });
+                fetchAndDisplayGames();
+            } else {
+                alert('Nie udało się zaktualizować gry.');
+            }
+        } catch (error) {
+            console.error('Błąd:', error);
+        }
+    });
+    
+    // Anulowanie edycji
+    cancelEditBtn.addEventListener('click', () => {
+        editFormContainer.style.display = 'none';
+        addForm.style.display = 'flex';
+    });
 
-            // Początkowe załadowanie listy gier
-            fetchAndDisplayGames();
-        });
-        </script>
-    </main>
-    {% include '_footer.html' %} 
+    // Początkowe załadowanie listy gier
+    fetchAndDisplayGames();
+});
+</script>
 </body>
 </html>

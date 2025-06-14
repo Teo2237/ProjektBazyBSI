@@ -7,9 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/workspaces/static/css/main.css') }}">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
     <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px 40px; color: #212529; }
         .container { max-width: 1100px; margin: 20px auto; }
         .back-button { display: inline-block; margin-bottom: 25px; color: #4a5568; text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
         .back-button:hover { color: #0d6efd; }
@@ -57,66 +56,64 @@
     </style>
 </head>
 <body>
-    {% include '_header.html' %}
-    <main class="container">
-   
+
+    <div class="container">
         <a href="/" class="back-button">&larr; Powrót do katalogu</a>
         <div id="game-details-container">
             <p>Ładowanie danych gry...</p>
         </div>
-    
+    </div>
 
-        <script>
-            // Krok 2: Logika pobierania i wyświetlania danych
-            document.addEventListener('DOMContentLoaded', async () => {
-                const container = document.getElementById('game-details-container');
+    <script>
+        // Krok 2: Logika pobierania i wyświetlania danych
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('game-details-container');
 
-                try {
-                    // Wyciągnij ID gry z adresu URL
-                    const pathParts = window.location.pathname.split('/');
-                    const gameId = pathParts[pathParts.length - 1];
+            try {
+                // Wyciągnij ID gry z adresu URL
+                const pathParts = window.location.pathname.split('/');
+                const gameId = pathParts[pathParts.length - 1];
 
-                    if (!gameId) {
-                        throw new Error('Nie znaleziono ID gry w adresie URL.');
-                    }
-
-                    // Pobierz dane gry z API
-                    const response = await fetch(`/api/games/${gameId}`);
-                    if (!response.ok) {
-                        throw new Error(`Nie udało się pobrać danych. Status: ${response.status}`);
-                    }
-                    const game = await response.json();
-
-                    // Zaktualizuj tytuł strony
-                    document.title = game.title;
-                    
-                    // Przygotuj tagi gatunków
-                    const genresHTML = game.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
-
-                    // Wypełnij kontener danymi
-                    container.innerHTML = `
-                        <div class="cover-image">
-                            <img src="${game.cover_image}" alt="Okładka gry ${game.title}">
-                        </div>
-                        <div class="game-info">
-                            <h1>${game.title}</h1>
-                            <div class="meta-info">
-                                <p><strong>Deweloper:</strong> ${game.developer || 'Brak danych'}</p>
-                                <p><strong>Wydawca:</strong> ${game.publisher || 'Brak danych'}</p>
-                                <p><strong>Data wydania:</strong> ${game.release_date}</p>
-                            </div>
-                            <div class="genre-tags-container">${genresHTML}</div>
-                            <p class="description">${game.description || 'Brak opisu.'}</p>
-                        </div>
-                    `;
-
-                } catch (error) {
-                    console.error('Błąd:', error);
-                    container.innerHTML = `<p style="color: red;">Wystąpił błąd podczas ładowania gry: ${error.message}</p>`;
+                if (!gameId) {
+                    throw new Error('Nie znaleziono ID gry w adresie URL.');
                 }
-            });
-        </script>
-    </main>
-        {% include '_footer.html' %}
+
+                // Pobierz dane gry z API
+                const response = await fetch(`/api/games/${gameId}`);
+                if (!response.ok) {
+                    throw new Error(`Nie udało się pobrać danych. Status: ${response.status}`);
+                }
+                const game = await response.json();
+
+                // Zaktualizuj tytuł strony
+                document.title = game.title;
+                
+                // Przygotuj tagi gatunków
+                const genresHTML = game.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
+
+                // Wypełnij kontener danymi
+                container.innerHTML = `
+                    <div class="cover-image">
+                        <img src="${game.cover_image}" alt="Okładka gry ${game.title}">
+                    </div>
+                    <div class="game-info">
+                        <h1>${game.title}</h1>
+                        <div class="meta-info">
+                            <p><strong>Deweloper:</strong> ${game.developer || 'Brak danych'}</p>
+                            <p><strong>Wydawca:</strong> ${game.publisher || 'Brak danych'}</p>
+                            <p><strong>Data wydania:</strong> ${game.release_date}</p>
+                        </div>
+                        <div class="genre-tags-container">${genresHTML}</div>
+                        <p class="description">${game.description || 'Brak opisu.'}</p>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Błąd:', error);
+                container.innerHTML = `<p style="color: red;">Wystąpił błąd podczas ładowania gry: ${error.message}</p>`;
+            }
+        });
+    </script>
+
 </body>
 </html>

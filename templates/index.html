@@ -7,9 +7,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/workspaces/static/css/main.css') }}">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+    
     <style>
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            color: #212529;
+        }
         header { text-align: center; margin-bottom: 20px; }
         h1 { color: #4a5568; font-weight: 700; }
         #controls { display: flex; justify-content: center; gap: 20px; margin-bottom: 40px; flex-wrap: wrap; }
@@ -38,113 +44,112 @@
     </style>
 </head>
 <body>
-    {% include '_header.html' %}
-    <main class="container">
-        <header>
-            <h1>Katalog Gier</h1>
-            <div id="controls">
-                <select id="genre-filter"><option value="">Filtruj po gatunku...</option></select>
-                <select id="sort-control">
-                    <option value="">Sortuj domyślnie</option>
-                    <option value="title">Tytuł (A-Z)</option>
-                    <option value="-title">Tytuł (Z-A)</option>
-                    <option value="-release_date">Data (od najnowszych)</option>
-                    <option value="release_date">Data (od najstarszych)</option>
-                </select>
-            </div>
-        </header>
 
-            <div id="games-container"><p>Ładowanie gier...</p></div>
+    <header>
+        <h1>Katalog Gier</h1>
+        <div id="controls">
+            <select id="genre-filter"><option value="">Filtruj po gatunku...</option></select>
+            <select id="sort-control">
+                <option value="">Sortuj domyślnie</option>
+                <option value="title">Tytuł (A-Z)</option>
+                <option value="-title">Tytuł (Z-A)</option>
+                <option value="-release_date">Data (od najnowszych)</option>
+                <option value="release_date">Data (od najstarszych)</option>
+            </select>
+        </div>
+    </header>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const gamesContainer = document.getElementById('games-container');
-                const genreFilter = document.getElementById('genre-filter');
-                const sortControl = document.getElementById('sort-control');
-
-                const renderGames = (games) => {
-                    gamesContainer.innerHTML = '';
-                    if (games.length === 0) {
-                        gamesContainer.innerHTML = '<p>Nie znaleziono gier spełniających wybrane kryteria.</p>';
-                        return;
-                    }
-                    games.forEach(game => {
-                        const cardLink = document.createElement('a');
-                        cardLink.className = 'game-card';
-                        cardLink.href = `/games/${game._id}`;
-                        
-                        const genresHTML = game.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
-                        
-                        cardLink.innerHTML = `
-                            <img src="${game.cover_image}" alt="Okładka gry ${game.title}">
-                            <div class="game-card-content">
-                                <div>
-                                    <h3>${game.title}</h3>
-                                    <p>Data wydania: ${game.release_date}</p>
-                                    <p>Deweloper: ${game.developer || 'Brak danych'}</p>
-                                </div>
-                                <div class="genre-tags-container">
-                                    ${genresHTML}
-                                </div>
-                            </div>
-                        `;
-                        gamesContainer.appendChild(cardLink);
-                    });
-                };
-                
-                // PEŁNY, POPRAWNY KOD FUNKCJI POBIERAJĄCEJ DANE
-                const fetchFilteredGames = async () => {
-                    const genre = genreFilter.value;
-                    const sort = sortControl.value;
-                    const params = new URLSearchParams();
-                    if (genre) params.append('genre', genre);
-                    if (sort) params.append('sort', sort);
-                    const queryString = params.toString();
-                    const url = `/api/games${queryString ? '?' + queryString : ''}`;
-                    try {
-                        gamesContainer.innerHTML = '<p>Ładowanie gier...</p>';
-                        const response = await fetch(url);
-                        if (!response.ok) throw new Error(`Błąd HTTP! Status: ${response.status}`);
-                        const games = await response.json();
-                        renderGames(games);
-                    } catch (error) {
-                        gamesContainer.innerHTML = `<p style="color: red;">Wystąpił błąd: ${error.message}</p>`;
-                        console.error('Błąd podczas pobierania filtrowanych gier:', error);
-                    }
-                };
-
-                // PEŁNY, POPRAWNY KOD FUNKCJI USTAWIAJĄCEJ FILTRY
-                const setupGenreFilter = async () => {
-                    try {
-                        const response = await fetch('/api/games');
-                        if (!response.ok) throw new Error('Nie można pobrać gatunków.');
-                        const games = await response.json();
-                        const allGenres = new Set();
-                        games.forEach(game => game.genres.forEach(genre => allGenres.add(genre)));
-                        const sortedGenres = [...allGenres].sort();
-                        sortedGenres.forEach(genre => {
-                            const option = document.createElement('option');
-                            option.value = genre;
-                            option.textContent = genre;
-                            genreFilter.appendChild(option);
-                        });
-                    } catch (error) {
-                        console.error('Błąd podczas ustawiania filtrów gatunków:', error);
-                    }
-                };
-
-                genreFilter.addEventListener('change', fetchFilteredGames);
-                sortControl.addEventListener('change', fetchFilteredGames);
-                
-                const init = async () => {
-                    await setupGenreFilter();
-                    await fetchFilteredGames();
-                };
-                
-                init();
-            });
-        </script>
-        {% include '_footer.html' %}
+    <main>
+        <div id="games-container"><p>Ładowanie gier...</p></div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gamesContainer = document.getElementById('games-container');
+            const genreFilter = document.getElementById('genre-filter');
+            const sortControl = document.getElementById('sort-control');
+
+            const renderGames = (games) => {
+                gamesContainer.innerHTML = '';
+                if (games.length === 0) {
+                    gamesContainer.innerHTML = '<p>Nie znaleziono gier spełniających wybrane kryteria.</p>';
+                    return;
+                }
+                games.forEach(game => {
+                    const cardLink = document.createElement('a');
+                    cardLink.className = 'game-card';
+                    cardLink.href = `/games/${game._id}`;
+                    
+                    const genresHTML = game.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
+                    
+                    cardLink.innerHTML = `
+                        <img src="${game.cover_image}" alt="Okładka gry ${game.title}">
+                        <div class="game-card-content">
+                            <div>
+                                <h3>${game.title}</h3>
+                                <p>Data wydania: ${game.release_date}</p>
+                                <p>Deweloper: ${game.developer || 'Brak danych'}</p>
+                            </div>
+                            <div class="genre-tags-container">
+                                ${genresHTML}
+                            </div>
+                        </div>
+                    `;
+                    gamesContainer.appendChild(cardLink);
+                });
+            };
+            
+            // PEŁNY, POPRAWNY KOD FUNKCJI POBIERAJĄCEJ DANE
+            const fetchFilteredGames = async () => {
+                const genre = genreFilter.value;
+                const sort = sortControl.value;
+                const params = new URLSearchParams();
+                if (genre) params.append('genre', genre);
+                if (sort) params.append('sort', sort);
+                const queryString = params.toString();
+                const url = `/api/games${queryString ? '?' + queryString : ''}`;
+                try {
+                    gamesContainer.innerHTML = '<p>Ładowanie gier...</p>';
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(`Błąd HTTP! Status: ${response.status}`);
+                    const games = await response.json();
+                    renderGames(games);
+                } catch (error) {
+                    gamesContainer.innerHTML = `<p style="color: red;">Wystąpił błąd: ${error.message}</p>`;
+                    console.error('Błąd podczas pobierania filtrowanych gier:', error);
+                }
+            };
+
+            // PEŁNY, POPRAWNY KOD FUNKCJI USTAWIAJĄCEJ FILTRY
+            const setupGenreFilter = async () => {
+                try {
+                    const response = await fetch('/api/games');
+                    if (!response.ok) throw new Error('Nie można pobrać gatunków.');
+                    const games = await response.json();
+                    const allGenres = new Set();
+                    games.forEach(game => game.genres.forEach(genre => allGenres.add(genre)));
+                    const sortedGenres = [...allGenres].sort();
+                    sortedGenres.forEach(genre => {
+                        const option = document.createElement('option');
+                        option.value = genre;
+                        option.textContent = genre;
+                        genreFilter.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Błąd podczas ustawiania filtrów gatunków:', error);
+                }
+            };
+
+            genreFilter.addEventListener('change', fetchFilteredGames);
+            sortControl.addEventListener('change', fetchFilteredGames);
+            
+            const init = async () => {
+                await setupGenreFilter();
+                await fetchFilteredGames();
+            };
+            
+            init();
+        });
+    </script>
 </body>
 </html>
