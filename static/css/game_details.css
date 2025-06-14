@@ -1,0 +1,231 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    color: #212529;
+    padding: 20px;
+}
+
+/* UJEDNOLICONE STYLE DLA NAGŁÓWKA */
+#page-header {
+    background-color: #ffffff;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.site-title a {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #212529;
+    text-decoration: none;
+}
+
+.header-nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.header-nav a {
+    color: #495057;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.header-nav a:hover,
+.header-nav a.active {
+    color: #0d6efd;
+}
+
+.header-nav .admin-btn {
+    background-color: #28a745;
+    color: #fff !important;
+    padding: 9px 18px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.header-nav .admin-btn:hover {
+    background-color: #218838;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.back-button {
+    display: inline-block;
+    margin: 20px 0;
+    color: #4a5568;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.back-button:hover {
+    color: #0d6efd;
+}
+
+#game-details-container {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 40px;
+}
+
+.cover-image img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.game-info h1 {
+    margin-top: 0;
+    font-size: 2.5em;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.game-info .description {
+    margin-top: 20px;
+    line-height: 1.7;
+    color: #4a5568;
+}
+
+.meta-info {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.meta-info p {
+    margin: 8px 0;
+}
+
+.meta-info strong {
+    color: #1a202c;
+}
+
+.genre-tags-container {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.genre-tag {
+    background-color: #eef2ff;
+    color: #4338ca;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+/* NOWE STYLE DLA ZWIASTUNA I GALERII */
+.section-title {
+    font-size: 2em;
+    font-weight: 700;
+    color: #4a5568;
+    margin-top: 50px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+.trailer-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* Proporcje 16:9 */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #000;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.trailer-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.gallery-container a {
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gallery-container a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    #game-details-container {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .game-info h1 {
+        font-size: 2em;
+    }
+}
+
+/* Style dla stopki */
+#page-footer {
+    background-color: #343a40;
+    color: #adb5bd;
+    padding: 40px;
+    margin-top: 60px;
+    text-align: center;
+}
+
+#page-footer .footer-nav {
+    margin-bottom: 20px;
+}
+
+#page-footer .footer-nav a {
+    color: #ced4da;
+    text-decoration: none;
+    margin: 0 15px;
+    transition: color 0.2s;
+}
+
+#page-footer .footer-nav a:hover {
+    color: #fff;
+}
+
+#page-footer .copyright {
+    font-size: 0.9em;
+}
