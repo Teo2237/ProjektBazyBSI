@@ -36,6 +36,29 @@
             #game-details-container { grid-template-columns: 1fr; }
             .game-info h1 { font-size: 2em; }
         }
+        /* Style dla stopki */
+#page-footer {
+    background-color: #343a40;
+    color: #adb5bd;
+    padding: 40px;
+    margin-top: 60px;
+    text-align: center;
+}
+#page-footer .footer-nav {
+    margin-bottom: 20px;
+}
+#page-footer .footer-nav a {
+    color: #ced4da;
+    text-decoration: none;
+    margin: 0 15px;
+    transition: color 0.2s;
+}
+#page-footer .footer-nav a:hover {
+    color: #fff;
+}
+#page-footer .copyright {
+    font-size: 0.9em;
+}
     </style>
 </head>
 <body>
@@ -110,5 +133,24 @@
             }
         });
     </script>
+    <footer id="page-footer">
+    <div class="footer-nav">
+        <a href="/">Katalog</a>
+        <a href="/about">O nas</a>
+        <a href="/contact">Kontakt</a>
+        <a href="/faq">FAQ</a>
+    </div>
+    <p class="copyright">
+        &copy; <span id="current-year"></span> GameBase. Wszelkie prawa zastrzeżone.
+    </p>
+</footer>
+
+<script>
+    // Skrypt do dynamicznego wstawiania bieżącego roku w stopce
+    // Umieszczony tutaj, aby był niezależny od innych skryptów na stronie
+    if (document.getElementById('current-year')) {
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    }
+</script>
 </body>
 </html>
