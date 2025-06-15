@@ -19,7 +19,7 @@
      min-height: 100%;
  }
 
- /* UJEDNOLICONE STYLE DLA NAGŁÓWKA */
+ /* STYLE DLA NAGŁÓWKA */
  #page-header {
      background-color: #ffffff;
      padding: 15px 40px;
@@ -66,7 +66,6 @@
      background-color: #218838;
  }
 
- /* Koniec stylów nagłówka */
 
  main {
      padding: 20px 40px;
@@ -198,15 +197,13 @@
      font-size: 0.9em;
  }
 
- /* Dodatkowe style dla nawigacji */
+ /* style dla nawigacji */
  #page-header {
      position: relative;
-     /* Potrzebne do pozycjonowania menu mobilnego */
  }
 
  #hamburger-btn {
      display: none;
-     /* Domyślnie ukryty na dużych ekranach */
      background: none;
      border: none;
      cursor: pointer;
@@ -226,12 +223,10 @@
  /* Media Query dla ekranów o szerokości do 768px (tablety i telefony) */
  @media (max-width: 768px) {
      .header-nav {
-         /* Ukrywamy nawigację i zmieniamy jej pozycjonowanie */
          display: none;
          flex-direction: column;
          position: absolute;
          top: 100%;
-         /* Tuż pod nagłówkiem */
          left: 0;
          width: 100%;
          background-color: #ffffff;
@@ -240,7 +235,6 @@
 
      .header-nav.mobile-active {
          display: flex;
-         /* Pokazujemy menu po kliknięciu */
      }
 
      .header-nav a {
@@ -256,7 +250,6 @@
 
      #hamburger-btn {
          display: block;
-         /* Pokazujemy przycisk hamburgera */
      }
  }
 

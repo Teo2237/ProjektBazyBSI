@@ -1,4 +1,4 @@
-/* Nowe reguły dla "przyklejonej stopki" */
+/* Reguły dla przyklejonej stopki */
 *,
 *::before,
 *::after {
@@ -21,7 +21,6 @@ body {
 
 main {
     flex-grow: 1;
-    /* To jest kluczowa reguła - mówi głównej sekcji, aby rosła i zajmowała całą wolną przestrzeń */
 }
 
 #page-header {
@@ -93,7 +92,7 @@ section {
     margin-bottom: 20px;
 }
 
-/* NOWE STYLE DLA FORMULARZY Z ETYKIETAMI */
+/* Style dla Formularzy z etykietami */
 form {
     display: flex;
     flex-direction: column;
@@ -120,7 +119,6 @@ form {
     font-size: 1em;
 }
 
-/* Koniec nowych stylów */
 
 form button {
     padding: 12px;
@@ -206,12 +204,10 @@ li:last-child {
 /* Dodatkowe style dla nawigacji */
 #page-header {
     position: relative;
-    /* Potrzebne do pozycjonowania menu mobilnego */
 }
 
 #hamburger-btn {
     display: none;
-    /* Domyślnie ukryty na dużych ekranach */
     background: none;
     border: none;
     cursor: pointer;
@@ -236,7 +232,6 @@ li:last-child {
         flex-direction: column;
         position: absolute;
         top: 100%;
-        /* Tuż pod nagłówkiem */
         left: 0;
         width: 100%;
         background-color: #ffffff;
@@ -245,7 +240,6 @@ li:last-child {
 
     .header-nav.mobile-active {
         display: flex;
-        /* Pokazujemy menu po kliknięciu */
     }
 
     .header-nav a {
@@ -261,7 +255,6 @@ li:last-child {
 
     #hamburger-btn {
         display: block;
-        /* Pokazujemy przycisk hamburgera */
     }
 }
 

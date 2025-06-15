@@ -7,8 +7,6 @@ client = MongoClient(os.environ.get("MONGO_URI"))
 db = client.gamesDB
 games_collection = db.games
 
-# UWAGA: Celowo usunęliśmy linię `games_collection.delete_many({})`,
-# aby skrypt nie kasował istniejących danych.
 
 # Dane, które chcemy wstawić lub zaktualizować
 games_data = [
@@ -42,7 +40,6 @@ games_data = [
         ],
         "youtube_trailer_id": "8X2kIfS6fb8"
     },
-    # Możesz tu dodawać kolejne gry, które chcesz mieć w bazie "na starcie"
     {
         "title": "Red Dead Redemption 2",
         "description": "Ameryka, rok 1899. Era Dzikiego Zachodu chyli się ku końcowi. Po nieudanym napadzie w mieście Blackwater, Arthur Morgan i gang van der Lindego muszą uciekać.",
@@ -173,13 +170,13 @@ games_data = [
    }
 ]
 
-# Przygotowanie listy operacji do wykonania na bazie danych
+# Lista operacji do wykonania na bazie danych
 operations = []
 for game_doc in games_data:
-    # Tworzymy operację typu "UpdateOne"
-    # Filtr `{ 'title': game_doc['title'] }` znajdzie grę po tytule.
-    # `$set: game_doc` zaktualizuje wszystkie pola dokumentu danymi z pliku.
-    # `upsert=True` to kluczowa opcja: jeśli gra nie zostanie znaleziona, zostanie utworzona.
+    # Operację typu "UpdateOne"
+    # Filtr `{ 'title': game_doc['title'] }` znajduję grę po tytule.
+    # `$set: game_doc` zaktulalizowanie wszystkich pól.
+    # `upsert=True` jeżeli gra nie zostanie znalezniona, zostanie utworzona w bazie danych.
     operation = UpdateOne(
         { "title": game_doc["title"] },
         { "$set": game_doc },
@@ -187,7 +184,7 @@ for game_doc in games_data:
     )
     operations.append(operation)
 
-# Wykonanie wszystkich operacji za jednym razem (jest to bardziej wydajne)
+# Wykonanie wszystkich operacji
 if operations:
     result = games_collection.bulk_write(operations)
     print("Operacje na bazie danych zakończone.")

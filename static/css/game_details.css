@@ -17,10 +17,10 @@ body {
 }
 
 main {
-    flex-grow: 1; /* To jest kluczowa reguła - mówi głównej sekcji, aby rosła i zajmowała całą wolną przestrzeń */
+    flex-grow: 1; 
 }
 
-/* UJEDNOLICONE STYLE DLA NAGŁÓWKA */
+/* STYLE DLA NAGŁÓWKA */
 #page-header {
     background-color: #ffffff;
     padding: 15px 40px;
@@ -148,7 +148,7 @@ main {
     font-weight: 500;
 }
 
-/* NOWE STYLE DLA ZWIASTUNA I GALERII */
+/* Style dla trailerów i zdjęć */
 .section-title {
     font-size: 2em;
     font-weight: 700;
@@ -161,7 +161,6 @@ main {
 .trailer-container {
     position: relative;
     padding-bottom: 56.25%;
-    /* Proporcje 16:9 */
     height: 0;
     overflow: hidden;
     max-width: 100%;
@@ -216,12 +215,10 @@ main {
     }
 
     .header-nav {
-        /* Ukrywamy nawigację i zmieniamy jej pozycjonowanie */
         display: none;
         flex-direction: column;
         position: absolute;
         top: 100%;
-        /* Tuż pod nagłówkiem */
         left: 0;
         width: 100%;
         background-color: #ffffff;
@@ -230,7 +227,6 @@ main {
 
     .header-nav.mobile-active {
         display: flex;
-        /* Pokazujemy menu po kliknięciu */
     }
 
     .header-nav a {
@@ -246,7 +242,6 @@ main {
 
     #hamburger-btn {
         display: block;
-        /* Pokazujemy przycisk hamburgera */
     }
 }
 
@@ -281,12 +276,10 @@ main {
 /* Dodatkowe style dla nawigacji */
 #page-header {
     position: relative;
-    /* Potrzebne do pozycjonowania menu mobilnego */
 }
 
 #hamburger-btn {
     display: none;
-    /* Domyślnie ukryty na dużych ekranach */
     background: none;
     border: none;
     cursor: pointer;

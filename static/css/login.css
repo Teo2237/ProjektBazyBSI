@@ -58,7 +58,7 @@ button:hover {
     font-weight: 500;
 }
 
-/* Styl dla nowego linku powrotu */
+/* Styl dla linku powrotu */
 .back-link {
     display: inline-block;
     margin-top: 25px;
@@ -73,15 +73,13 @@ button:hover {
     text-decoration: underline;
 }
 
-/* Dodatkowe style dla nawigacji */
+/* style dla nawigacji */
 #page-header {
     position: relative;
-    /* Potrzebne do pozycjonowania menu mobilnego */
 }
 
 #hamburger-btn {
     display: none;
-    /* Domyślnie ukryty na dużych ekranach */
     background: none;
     border: none;
     cursor: pointer;
@@ -101,12 +99,10 @@ button:hover {
 /* Media Query dla ekranów o szerokości do 768px (tablety i telefony) */
 @media (max-width: 768px) {
     .header-nav {
-        /* Ukrywamy nawigację i zmieniamy jej pozycjonowanie */
         display: none;
         flex-direction: column;
         position: absolute;
         top: 100%;
-        /* Tuż pod nagłówkiem */
         left: 0;
         width: 100%;
         background-color: #ffffff;
@@ -115,7 +111,6 @@ button:hover {
 
     .header-nav.mobile-active {
         display: flex;
-        /* Pokazujemy menu po kliknięciu */
     }
 
     .header-nav a {
@@ -131,6 +126,5 @@ button:hover {
 
     #hamburger-btn {
         display: block;
-        /* Pokazujemy przycisk hamburgera */
     }
 }

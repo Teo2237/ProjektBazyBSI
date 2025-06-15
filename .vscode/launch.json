@@ -12,7 +12,7 @@
             "env": {
                 "FLASK_APP": "app.py",
                 "FLASK_DEBUG": "1",
-                //Przekaż adres bazy danych jako zmienną środowiskową
+                //Przekazanie adresu bazy danych jako zmiennej środowiskowej
                 "MONGO_URI": "mongodb://mongo:mongo@mongo:27017"
             },
             "args": [

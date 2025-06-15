@@ -92,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
             editForm.elements.cover_image.value = game.cover_image || '';
             editForm.elements.description.value = game.description || '';
 
-            // ZAKTUALIZOWANA LOGIKA DLA NOWYCH PÓL
             editForm.elements.youtube_trailer_id.value = game.youtube_trailer_id || '';
             editForm.elements.screenshots.value = game.screenshots ? game.screenshots.join('\n') : '';
 

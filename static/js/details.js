@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const game = await response.json();
         document.title = game.title;
 
-        // --- Renderowanie głównych informacji (bez zmian) ---
+        // --- Renderowanie głównych informacji ---
         const genresHTML = game.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('');
         detailsContainer.innerHTML = `
                     <div class="details-grid">
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 `;
 
-        // --- NOWA LOGIKA: Renderowanie zwiastuna ---
+        // --- Renderowanie zwiastuna ---
         if (game.youtube_trailer_id) {
             trailerSection.innerHTML = `
                         <h2 class="section-title">Zwiastun</h2>
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     `;
         }
 
-        // --- NOWA LOGIKA: Renderowanie galerii screenshotów ---
+        // --- Renderowanie galerii screenshotów ---
         if (game.screenshots && game.screenshots.length > 0) {
             const galleryHTML = game.screenshots.map(url => `
                         <a href="${url}" target="_blank">

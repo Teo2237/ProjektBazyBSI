@@ -1,4 +1,3 @@
-// Cały kod JavaScript pozostaje bez zmian
 document.addEventListener('DOMContentLoaded', () => {
     const gamesContainer = document.getElementById('games-container');
     const genreFilter = document.getElementById('genre-filter');

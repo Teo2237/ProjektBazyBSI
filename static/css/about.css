@@ -1,4 +1,4 @@
-/* Nowe reguły dla "przyklejonej stopki" */
+/* Reguły dla przyklejonej stopki*/
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -69,7 +69,6 @@ main {
     max-width: 900px;
     margin: 40px auto;
     flex-grow: 1;
-    /* To jest kluczowa reguła - mówi głównej sekcji, aby rosła i zajmowała całą wolną przestrzeń */
 }
 
 h1 {
@@ -135,15 +134,13 @@ p {
     font-size: 0.9em;
 }
 
-/* Dodatkowe style dla nawigacji */
+/* Style dla nawigacji */
 #page-header {
     position: relative;
-    /* Potrzebne do pozycjonowania menu mobilnego */
 }
 
 #hamburger-btn {
     display: none;
-    /* Domyślnie ukryty na dużych ekranach */
     background: none;
     border: none;
     cursor: pointer;
@@ -168,7 +165,6 @@ p {
         flex-direction: column;
         position: absolute;
         top: 100%;
-        /* Tuż pod nagłówkiem */
         left: 0;
         width: 100%;
         background-color: #ffffff;

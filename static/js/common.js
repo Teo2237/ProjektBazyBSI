@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Istniejący kod do stopki
+    // kod do stopki
     if (document.getElementById('current-year')) {
         document.getElementById('current-year').textContent = new Date().getFullYear();
     }
